@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: ai-chatbot
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn --workers 1 --threads 1 --timeout 120 app:app
