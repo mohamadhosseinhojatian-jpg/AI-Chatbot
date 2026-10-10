@@ -1,166 +1,299 @@
+
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Chatbot</title>
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f5f5f5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-
-        .chat-container {
-            width: 500px;
-            height: 650px;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 5px 25px rgba(0,0,0,0.15);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        .header {
-            background: #111827;
-            color: white;
-            padding: 20px;
-            text-align: center;
-            font-size: 22px;
-            font-weight: bold;
-        }
-
-        .messages {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-        }
-
-        .message {
-    margin-bottom: 15px;
-    padding: 10px 15px;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Chatbot</title>
+<style>
+:root {
+    color-scheme: dark;
+    --bg: #212121;
+    --panel: #171717;
+    --surface: #2f2f2f;
+    --border: #424242;
+    --text: #ececec;
+    --muted: #a0a0a0;
+    --accent: #10a37f;
+}
+* { box-sizing: border-box; }
+body {
+    margin: 0;
+    height: 100dvh;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+}
+.app { display: flex; height: 100%; }
+.sidebar {
+    width: 250px;
+    flex-shrink: 0;
+    background: var(--panel);
+    padding: 20px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    border-inline-end: 1px solid #292929;
+}
+.brand { font-size: 20px; font-weight: 700; padding: 8px; }
+.new-chat, .language, .send {
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text);
     border-radius: 12px;
-    max-width: 80%;
-    direction: auto;
+    padding: 12px;
+    cursor: pointer;
+    font-size: 14px;
+}
+.new-chat { text-align: start; }
+.new-chat:hover, .language:hover { background: var(--surface); }
+.side-note { color: var(--muted); font-size: 12px; margin-top: auto; line-height: 1.8; }
+.main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.topbar {
+    height: 64px;
+    padding: 0 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #303030;
+}
+.top-title { font-weight: 600; }
+.language { padding: 8px 12px; }
+.messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 30px 18px;
+    scroll-behavior: smooth;
+}
+.welcome {
+    max-width: 680px;
+    margin: 13vh auto 35px;
+    text-align: center;
+}
+.logo {
+    width: 54px; height: 54px;
+    display: grid; place-items: center;
+    border-radius: 18px;
+    background: var(--accent);
+    margin: 0 auto 22px;
+    font-size: 27px;
+}
+.welcome h1 { font-size: clamp(24px, 4vw, 34px); margin: 0 0 12px; }
+.welcome p { color: var(--muted); line-height: 1.8; }
+.message-row { max-width: 760px; margin: 0 auto 24px; display: flex; }
+.message {
+    max-width: 88%;
+    padding: 13px 17px;
+    border-radius: 18px;
+    line-height: 1.8;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
     unicode-bidi: plaintext;
     text-align: start;
 }
-        
-
-        .user {
-            background: #dbeafe;
-            margin-left: auto;
-        }
-
-        .ai {
-            background: #f3f4f6;
-            margin-right: auto;
-        }
-
-        .input-area {
-            display: flex;
-            padding: 15px;
-            border-top: 1px solid #ddd;
-        }
-
-        input {
-            flex: 1;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            font-size: 16px;
-        }
-
-        button {
-            margin-left: 10px;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 8px;
-            background: #111827;
-            color: white;
-            cursor: pointer;
-        }
-    </style>
+.user-row { justify-content: flex-start; }
+.user-message { background: #303030; }
+.ai-row { justify-content: flex-end; }
+.ai-message { background: transparent; }
+.input-wrap { padding: 12px 18px 22px; }
+.input-box {
+    max-width: 760px;
+    margin: auto;
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    padding: 10px;
+    background: var(--surface);
+    border: 1px solid #505050;
+    border-radius: 22px;
+}
+textarea {
+    flex: 1;
+    min-width: 0;
+    max-height: 180px;
+    resize: none;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--text);
+    padding: 10px 8px;
+    font: inherit;
+    line-height: 1.6;
+}
+textarea::placeholder { color: var(--muted); }
+.send {
+    background: var(--text);
+    color: #171717;
+    border: 0;
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    border-radius: 50%;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+.send:disabled { opacity: .45; cursor: wait; }
+.disclaimer { text-align: center; font-size: 11px; color: var(--muted); margin-top: 10px; }
+@media (max-width: 650px) {
+    .sidebar { display: none; }
+    .topbar { padding: 0 14px; }
+    .messages { padding: 20px 12px; }
+    .input-wrap { padding: 10px 10px 14px; }
+    .message { max-width: 94%; }
+    .welcome { margin-top: 10vh; }
+}
+</style>
 </head>
-
 <body>
+<div class="app">
+    <aside class="sidebar">
+        <div class="brand">✳ AI Chatbot</div>
+        <button class="new-chat" id="newChat">＋ گفت‌وگوی جدید</button>
+        <div class="side-note" id="sideNote">دستیار هوشمند شما<br>قدرت‌گرفته از Gemini</div>
+    </aside>
 
-<div class="chat-container">
+    <main class="main">
+        <header class="topbar">
+            <div class="top-title">AI Chatbot</div>
+            <button class="language" id="languageBtn">English</button>
+        </header>
 
-    <div class="header">
-        🤖 AI Chatbot
-    </div>
+        <section class="messages" id="messages" aria-live="polite">
+            <div class="welcome" id="welcome">
+                <div class="logo">✳</div>
+                <h1 id="welcomeTitle">امروز چطور می‌تونم کمکت کنم؟</h1>
+                <p id="welcomeText">هر سؤالی داری بپرس؛ با هم حلش می‌کنیم.</p>
+            </div>
+        </section>
 
-    <div class="messages" id="messages">
-        <div class="message ai">
-            Hello! How can I help you?
+        <div class="input-wrap">
+            <form class="input-box" id="chatForm">
+                <textarea id="messageInput" rows="1"
+                    placeholder="پیامت رو اینجا بنویس..." aria-label="پیام شما"></textarea>
+                <button class="send" id="sendBtn" type="submit" aria-label="ارسال">↑</button>
+            </form>
+            <div class="disclaimer" id="disclaimer">هوش مصنوعی ممکن است اشتباه کند؛ پاسخ‌های مهم را بررسی کنید.</div>
         </div>
-    </div>
-
-    <div class="input-area">
-        <input
-            type="text"
-            id="messageInput"
-            placeholder="Type your message..."
-        >
-
-        <button onclick="sendMessage()">
-            Send
-        </button>
-    </div>
-
+    </main>
 </div>
 
 <script>
-async function sendMessage() {
+const messages = document.getElementById("messages");
+const input = document.getElementById("messageInput");
+const form = document.getElementById("chatForm");
+const sendBtn = document.getElementById("sendBtn");
+const welcome = document.getElementById("welcome");
+const languageBtn = document.getElementById("languageBtn");
 
-    const input = document.getElementById("messageInput");
-    const messages = document.getElementById("messages");
+let language = "fa";
+let busy = false;
 
-    const text = input.value.trim();
+const translations = {
+    fa: {
+        newChat: "＋ گفت‌وگوی جدید",
+        side: "دستیار هوشمند شما<br>قدرت‌گرفته از Gemini",
+        welcome: "امروز چطور می‌تونم کمکت کنم؟",
+        subtitle: "هر سؤالی داری بپرس؛ با هم حلش می‌کنیم.",
+        placeholder: "پیامت رو اینجا بنویس...",
+        disclaimer: "هوش مصنوعی ممکن است اشتباه کند؛ پاسخ‌های مهم را بررسی کنید.",
+        sending: "در حال فکر کردن...",
+        error: "متأسفانه مشکلی پیش آمد. دوباره تلاش کن.",
+        language: "English"
+    },
+    en: {
+        newChat: "＋ New chat",
+        side: "Your intelligent assistant<br>Powered by Gemini",
+        welcome: "How can I help you today?",
+        subtitle: "Ask anything. Let's figure it out together.",
+        placeholder: "Message AI Chatbot...",
+        disclaimer: "AI can make mistakes. Check important information.",
+        sending: "Thinking...",
+        error: "Something went wrong. Please try again.",
+        language: "فارسی"
+    }
+};
 
-    if (!text) return;
-
-    messages.innerHTML += `
-        <div class="message user">
-            ${text}
-        </div>
-    `;
-
-    input.value = "";
-
-    const response = await fetch("/chat", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            message: text
-        })
-    });
-
-    const data = await response.json();
-
-    messages.innerHTML += `
-        <div class="message ai">
-            ${data.response}
-        </div>
-    `;
-
-    messages.scrollTop = messages.scrollHeight;
+function setLanguage(lang) {
+    language = lang;
+    const t = translations[lang];
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === "fa" ? "rtl" : "ltr";
+    document.getElementById("newChat").textContent = t.newChat;
+    document.getElementById("sideNote").innerHTML = t.side;
+    document.getElementById("welcomeTitle").textContent = t.welcome;
+    document.getElementById("welcomeText").textContent = t.subtitle;
+    document.getElementById("disclaimer").textContent = t.disclaimer;
+    input.placeholder = t.placeholder;
+    languageBtn.textContent = t.language;
 }
-    document.getElementById("messageInput").addEventListener("keydown", function(event) {
-    if (event.key === "Enter") {
-        sendMessage();
+
+languageBtn.addEventListener("click", () => {
+    setLanguage(language === "fa" ? "en" : "fa");
+});
+
+function addMessage(text, type) {
+    const row = document.createElement("div");
+    row.className = "message-row " + (type === "user" ? "user-row" : "ai-row");
+    const bubble = document.createElement("div");
+    bubble.className = "message " + (type === "user" ? "user-message" : "ai-message");
+    bubble.textContent = text;
+    row.appendChild(bubble);
+    messages.appendChild(row);
+    messages.scrollTop = messages.scrollHeight;
+    return bubble;
+}
+
+form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const text = input.value.trim();
+    if (!text || busy) return;
+
+    welcome.hidden = true;
+    addMessage(text, "user");
+    input.value = "";
+    input.style.height = "auto";
+    busy = true;
+    sendBtn.disabled = true;
+    const loading = addMessage(translations[language].sending, "ai");
+
+    try {
+        const response = await fetch("/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: text })
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error("Request failed");
+        loading.textContent = data.response || translations[language].error;
+    } catch (error) {
+        loading.textContent = translations[language].error;
+    } finally {
+        busy = false;
+        sendBtn.disabled = false;
+        input.focus();
+        messages.scrollTop = messages.scrollHeight;
     }
 });
-</script>
 
+document.getElementById("newChat").addEventListener("click", () => {
+    messages.replaceChildren(welcome);
+    welcome.hidden = false;
+    input.focus();
+});
+
+input.addEventListener("input", () => {
+    input.style.height = "auto";
+    input.style.height = Math.min(input.scrollHeight, 180) + "px";
+});
+
+input.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        form.requestSubmit();
+    }
+});
+
+setLanguage("fa");
+</script>
 </body>
 </html>
